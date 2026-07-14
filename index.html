@@ -3,169 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Paisa-Trakrrrr Pro</title>
+    <title>Paisa-Trakrrrr Ultimate</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #000000; }
+        ::-webkit-scrollbar { display: none; }
+        .bento-card { background: #111111; border: 1px solid #222; border-radius: 24px; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-200 font-sans antialiased min-h-screen">
+<body class="text-gray-200 antialiased min-h-screen pb-20">
 
-    <header class="fixed top-0 w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 z-50 shadow-sm shadow-emerald-900/20">
-        <div class="max-w-md mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 tracking-tight drop-shadow-sm">
-                ₹ Paisa-Trakrrrr
-            </h1>
-            <button onclick="exportToCSV()" class="text-xs bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                CSV
-            </button>
-        </div>
-    </header>
-
-    <main class="pt-24 pb-12 px-4 max-w-md mx-auto space-y-6">
+    <div class="max-w-md mx-auto px-4 pt-8 space-y-4">
         
-        <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 p-6 rounded-3xl border border-slate-700 shadow-xl relative overflow-hidden flex flex-col items-center">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
-            
-            <div class="w-full flex justify-between items-end mb-4 z-10">
+        <div class="bento-card p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-purple-600/20 rounded-full blur-3xl"></div>
+            <div class="flex justify-between items-start mb-6">
                 <div>
-                    <p class="text-sm text-slate-400 font-medium uppercase tracking-wider mb-1">Total Spent</p>
-                    <h2 class="text-4xl font-bold text-white flex items-baseline">
-                        <span class="text-2xl mr-1 text-emerald-400">₹</span><span id="totalDisplay">0</span>
-                    </h2>
+                    <h1 class="text-xl font-extrabold tracking-tight text-white mb-1">Paisa-Trakrrrr</h1>
+                    <p class="text-xs text-gray-400">Monthly Snapshot</p>
                 </div>
             </div>
+            
+            <h2 class="text-5xl font-extrabold text-white mb-4 tracking-tighter">
+                <span class="text-2xl text-gray-500 mr-1">₹</span><span id="totalDisplay">0</span>
+            </h2>
 
-            <div class="w-full max-w-[200px] aspect-square relative z-10">
-                <canvas id="expenseChart"></canvas>
+            <div class="space-y-2">
+                <div class="flex justify-between text-xs text-gray-400 font-semibold">
+                    <span>Budget Limit: ₹<span id="budgetLimitText">15,000</span></span>
+                    <span id="budgetPercent">0%</span>
+                </div>
+                <div class="w-full bg-gray-800 rounded-full h-2.5">
+                    <div id="budgetBar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
             </div>
         </div>
 
-        <div class="bg-slate-800/80 rounded-3xl p-5 border border-slate-700 shadow-lg backdrop-blur-sm">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1 ml-1">What was it?</label>
-                    <input type="text" id="descInput" placeholder="e.g., Midnight snacks, Tolls..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
-                </div>
-                <div class="flex gap-3">
-                    <div class="flex-1">
-                        <label class="block text-xs text-slate-400 mb-1 ml-1">Amount (₹)</label>
-                        <input type="number" id="amountInput" placeholder="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-xs text-slate-400 mb-1 ml-1">Category</label>
-                        <select id="categoryInput" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-emerald-500 transition-all appearance-none">
-                            <option value="🍔 Food & Snacks">🍔 Food & Snacks</option>
-                            <option value="🏍️ Fuel & Ride">🏍️ Fuel & Ride</option>
-                            <option value="🎬 Weekend & Movies">🎬 Weekend & Movies</option>
-                            <option value="📈 Investments">📈 Investments</option>
-                            <option value="🛒 Needs">🛒 Needs</option>
-                            <option value="✨ Other">✨ Other</option>
-                        </select>
-                    </div>
-                </div>
-                <button onclick="addExpense()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold text-lg py-3 rounded-xl shadow-lg shadow-emerald-500/30 transition-all active:scale-[0.98]">
-                    + Log Expense
+        <div class="bento-card p-5">
+            <h3 class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">⚡ Quick Log</h3>
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="quickLog('Roadside Snacks', 150, '🍦 Roadside Cravings')" class="bg-gray-800 hover:bg-gray-700 rounded-xl p-3 text-left transition-transform active:scale-95">
+                    <div class="text-xl mb-1">🍦</div>
+                    <div class="text-[10px] text-gray-400 line-clamp-1">Snacks</div>
+                    <div class="text-sm font-bold text-white">₹150</div>
+                </button>
+                <button onclick="quickLog('Bike Fuel', 300, '🏍️ Night Rides & Fuel')" class="bg-gray-800 hover:bg-gray-700 rounded-xl p-3 text-left transition-transform active:scale-95">
+                    <div class="text-xl mb-1">🏍️</div>
+                    <div class="text-[10px] text-gray-400 line-clamp-1">Fuel</div>
+                    <div class="text-sm font-bold text-white">₹300</div>
+                </button>
+                <button onclick="quickLog('Movie / Karting', 500, '🎬 Weekend Experiences')" class="bg-gray-800 hover:bg-gray-700 rounded-xl p-3 text-left transition-transform active:scale-95">
+                    <div class="text-xl mb-1">🎬</div>
+                    <div class="text-[10px] text-gray-400 line-clamp-1">Weekend</div>
+                    <div class="text-sm font-bold text-white">₹500</div>
                 </button>
             </div>
         </div>
 
-        <div>
-            <h3 class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-3 ml-2">Recent Logs</h3>
-            <div id="expenseList" class="space-y-3">
+        <div class="bento-card p-5">
+            <div class="flex gap-3 mb-3">
+                <input type="text" id="descInput" placeholder="What did you buy?" class="flex-1 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+                <input type="number" id="amountInput" placeholder="₹ Amount" class="w-28 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+            </div>
+            <div class="flex gap-3">
+                <select id="categoryInput" class="flex-1 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none appearance-none">
+                    <option value="🏍️ Night Rides & Fuel">🏍️ Night Rides & Fuel</option>
+                    <option value="🍦 Roadside Cravings">🍦 Roadside Cravings</option>
+                    <option value="🎬 Weekend Experiences">🎬 Weekend (Trekking, Karting, Cinema)</option>
+                    <option value="🥗 Veg Day Discipline">🥗 Veg Day Discipline</option>
+                    <option value="📚 Data Science & Tech">📚 Data Science & Tech</option>
+                    <option value="📈 Stocks & Investments">📈 Stocks & Investments</option>
+                    <option value="🛒 General Needs">🛒 General Needs</option>
+                </select>
+                <button onclick="addExpense()" class="w-28 bg-white text-black font-bold text-sm rounded-xl hover:bg-gray-200 transition-transform active:scale-95">
+                    Add
+                </button>
+            </div>
+        </div>
+
+        <div class="bento-card p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xs text-gray-400 font-semibold uppercase tracking-wider">History</h3>
+                <input type="text" id="searchInput" onkeyup="filterExpenses()" placeholder="🔍 Search..." class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-32">
+            </div>
+            <div id="expenseList" class="space-y-1 max-h-64 overflow-y-auto pr-1">
                 </div>
         </div>
 
-    </main>
+    </div>
 
     <script>
         let expenses = JSON.parse(localStorage.getItem('paisaTracker')) || [];
-        let chartInstance = null;
+        const MONTHLY_BUDGET = 15000; // Change this number to your actual monthly limit
 
-        function renderUI() {
+        function renderUI(filterText = '') {
             const list = document.getElementById('expenseList');
             const totalDisplay = document.getElementById('totalDisplay');
+            const budgetBar = document.getElementById('budgetBar');
+            const budgetPercent = document.getElementById('budgetPercent');
             
             list.innerHTML = '';
             let total = 0;
-            let categoryTotals = {};
-
-            if (expenses.length === 0) {
-                list.innerHTML = `<p class="text-center text-slate-500 mt-6 text-sm">No logs yet. Start tracking!</p>`;
-            }
 
             expenses.slice().reverse().forEach((exp, index) => {
                 total += exp.amount;
-                
-                // Grouping data for the chart
-                let rawCat = exp.category || '✨ Other';
-                categoryTotals[rawCat] = (categoryTotals[rawCat] || 0) + exp.amount;
-
                 const realIndex = expenses.length - 1 - index; 
-                const emoji = rawCat.split(' ')[0];
+                const emoji = exp.category.split(' ')[0];
+
+                // Search Filter Logic
+                if (filterText && !exp.desc.toLowerCase().includes(filterText.toLowerCase()) && !exp.category.toLowerCase().includes(filterText.toLowerCase())) {
+                    return;
+                }
 
                 const item = document.createElement('div');
-                item.className = "bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 flex justify-between items-center shadow-sm";
+                item.className = "group flex justify-between items-center py-3 border-b border-gray-800/50 last:border-0";
                 item.innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <div class="text-2xl">${emoji}</div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-lg border border-gray-800">${emoji}</div>
                         <div>
-                            <p class="text-slate-200 font-medium">${exp.desc}</p>
-                            <p class="text-xs text-slate-500">${new Date(exp.date).toLocaleDateString('en-IN')}</p>
+                            <p class="text-sm font-semibold text-gray-200">${exp.desc}</p>
+                            <p class="text-[10px] text-gray-500">${new Date(exp.date).toLocaleDateString('en-IN')} • ${exp.category.substring(2)}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span class="text-lg font-bold text-slate-100">₹${exp.amount}</span>
-                        <button onclick="deleteExpense(${realIndex})" class="text-slate-600 hover:text-red-400 p-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
+                        <span class="text-sm font-bold text-white">₹${exp.amount}</span>
+                        <button onclick="deleteExpense(${realIndex})" class="text-gray-600 hover:text-red-500 text-lg px-2 active:scale-90">×</button>
                     </div>
                 `;
                 list.appendChild(item);
             });
 
+            // Update Budget UI
             totalDisplay.innerText = total.toLocaleString('en-IN');
+            let percent = Math.min((total / MONTHLY_BUDGET) * 100, 100);
+            budgetBar.style.width = percent + '%';
+            budgetPercent.innerText = Math.round(percent) + '%';
+            
+            if(percent >= 90) budgetBar.className = "bg-red-500 h-2.5 rounded-full";
+            else budgetBar.className = "bg-gradient-to-r from-purple-500 to-indigo-500 h-2.5 rounded-full";
+
             localStorage.setItem('paisaTracker', JSON.stringify(expenses));
-            updateChart(categoryTotals);
-        }
-
-        function updateChart(categoryTotals) {
-            const ctx = document.getElementById('expenseChart').getContext('2d');
-            const labels = Object.keys(categoryTotals).map(c => c.substring(2)); // Remove emoji for chart labels
-            const data = Object.values(categoryTotals);
-
-            if (chartInstance) { chartInstance.destroy(); }
-
-            if(data.length === 0) return; // Don't draw empty chart
-
-            chartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: ['#34d399', '#2dd4bf', '#22d3ee', '#818cf8', '#a78bfa', '#f472b6'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    cutout: '75%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) { return ' ₹' + context.parsed; }
-                            }
-                        }
-                    }
-                }
-            });
         }
 
         function addExpense() {
@@ -174,11 +152,18 @@
             const category = document.getElementById('categoryInput').value;
 
             if (!desc || isNaN(amount) || amount <= 0) return;
-
-            expenses.push({ desc, amount, category, date: new Date().toISOString() });
-
+            saveExpense(desc, amount, category);
+            
             document.getElementById('descInput').value = '';
             document.getElementById('amountInput').value = '';
+        }
+
+        function quickLog(desc, amount, category) {
+            saveExpense(desc, amount, category);
+        }
+
+        function saveExpense(desc, amount, category) {
+            expenses.push({ desc, amount, category, date: new Date().toISOString() });
             renderUI();
         }
 
@@ -187,23 +172,9 @@
             renderUI();
         }
 
-        function exportToCSV() {
-            if (expenses.length === 0) return alert("No data to export!");
-            
-            let csvContent = "data:text/csv;charset=utf-8,Date,Description,Category,Amount\n";
-            expenses.forEach(e => {
-                let date = new Date(e.date).toLocaleDateString('en-IN');
-                let row = `"${date}","${e.desc}","${e.category}",${e.amount}`;
-                csvContent += row + "\n";
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "paisa_trakrrrr_data.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        function filterExpenses() {
+            const query = document.getElementById('searchInput').value;
+            renderUI(query);
         }
 
         renderUI();
