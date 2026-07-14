@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Paisa-Trakrrrr</title>
+    <title>Paisa-Trakrrrr Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Custom scrollbar for a polished look */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
@@ -14,48 +14,62 @@
 </head>
 <body class="bg-slate-900 text-slate-200 font-sans antialiased min-h-screen">
 
-    <header class="fixed top-0 w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800 z-50 shadow-sm shadow-emerald-900/20">
-        <div class="max-w-md mx-auto px-4 py-4 flex justify-center items-center">
-            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 tracking-tight drop-shadow-sm">
+    <header class="fixed top-0 w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 z-50 shadow-sm shadow-emerald-900/20">
+        <div class="max-w-md mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 tracking-tight drop-shadow-sm">
                 ₹ Paisa-Trakrrrr
             </h1>
+            <button onclick="exportToCSV()" class="text-xs bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                CSV
+            </button>
         </div>
     </header>
 
     <main class="pt-24 pb-12 px-4 max-w-md mx-auto space-y-6">
         
-        <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 p-6 rounded-3xl border border-slate-700 shadow-xl relative overflow-hidden">
+        <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 p-6 rounded-3xl border border-slate-700 shadow-xl relative overflow-hidden flex flex-col items-center">
             <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
-            <p class="text-sm text-slate-400 font-medium uppercase tracking-wider mb-1">Total Spent</p>
-            <h2 class="text-5xl font-bold text-white flex items-baseline">
-                <span class="text-3xl mr-1 text-emerald-400">₹</span><span id="totalDisplay">0</span>
-            </h2>
+            
+            <div class="w-full flex justify-between items-end mb-4 z-10">
+                <div>
+                    <p class="text-sm text-slate-400 font-medium uppercase tracking-wider mb-1">Total Spent</p>
+                    <h2 class="text-4xl font-bold text-white flex items-baseline">
+                        <span class="text-2xl mr-1 text-emerald-400">₹</span><span id="totalDisplay">0</span>
+                    </h2>
+                </div>
+            </div>
+
+            <div class="w-full max-w-[200px] aspect-square relative z-10">
+                <canvas id="expenseChart"></canvas>
+            </div>
         </div>
 
         <div class="bg-slate-800/80 rounded-3xl p-5 border border-slate-700 shadow-lg backdrop-blur-sm">
-            <h3 class="text-lg font-semibold text-slate-100 mb-4">Log New Expense</h3>
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs text-slate-400 mb-1 ml-1">What was it?</label>
-                    <input type="text" id="descInput" placeholder="e.g., Roadside Ice Cream, Fuel..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all">
+                    <input type="text" id="descInput" placeholder="e.g., Midnight snacks, Tolls..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
                 </div>
                 <div class="flex gap-3">
                     <div class="flex-1">
                         <label class="block text-xs text-slate-400 mb-1 ml-1">Amount (₹)</label>
-                        <input type="number" id="amountInput" placeholder="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all">
+                        <input type="number" id="amountInput" placeholder="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
                     </div>
                     <div class="flex-1">
                         <label class="block text-xs text-slate-400 mb-1 ml-1">Category</label>
-                        <select id="categoryInput" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all appearance-none">
-                            <option>🍔 Food</option>
-                            <option>🏍️ Fuel</option>
-                            <option>🛒 Needs</option>
-                            <option>📈 Other</option>
+                        <select id="categoryInput" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-emerald-500 transition-all appearance-none">
+                            <option value="🍔 Food & Snacks">🍔 Food & Snacks</option>
+                            <option value="🏍️ Fuel & Ride">🏍️ Fuel & Ride</option>
+                            <option value="🎬 Weekend & Movies">🎬 Weekend & Movies</option>
+                            <option value="📈 Investments">📈 Investments</option>
+                            <option value="🛒 Needs">🛒 Needs</option>
+                            <option value="✨ Other">✨ Other</option>
                         </select>
                     </div>
                 </div>
                 <button onclick="addExpense()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold text-lg py-3 rounded-xl shadow-lg shadow-emerald-500/30 transition-all active:scale-[0.98]">
-                    + Add to Tracker
+                    + Log Expense
                 </button>
             </div>
         </div>
@@ -69,8 +83,8 @@
     </main>
 
     <script>
-        // The script checks if you have old data saved on your phone and keeps it!
         let expenses = JSON.parse(localStorage.getItem('paisaTracker')) || [];
+        let chartInstance = null;
 
         function renderUI() {
             const list = document.getElementById('expenseList');
@@ -78,20 +92,27 @@
             
             list.innerHTML = '';
             let total = 0;
+            let categoryTotals = {};
 
             if (expenses.length === 0) {
-                list.innerHTML = `<p class="text-center text-slate-500 mt-6 text-sm">No expenses yet. Time to hit the road!</p>`;
+                list.innerHTML = `<p class="text-center text-slate-500 mt-6 text-sm">No logs yet. Start tracking!</p>`;
             }
 
             expenses.slice().reverse().forEach((exp, index) => {
                 total += exp.amount;
+                
+                // Grouping data for the chart
+                let rawCat = exp.category || '✨ Other';
+                categoryTotals[rawCat] = (categoryTotals[rawCat] || 0) + exp.amount;
+
                 const realIndex = expenses.length - 1 - index; 
+                const emoji = rawCat.split(' ')[0];
 
                 const item = document.createElement('div');
                 item.className = "bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 flex justify-between items-center shadow-sm";
                 item.innerHTML = `
                     <div class="flex items-center gap-4">
-                        <div class="text-2xl">${exp.category ? exp.category.split(' ')[0] : '💸'}</div>
+                        <div class="text-2xl">${emoji}</div>
                         <div>
                             <p class="text-slate-200 font-medium">${exp.desc}</p>
                             <p class="text-xs text-slate-500">${new Date(exp.date).toLocaleDateString('en-IN')}</p>
@@ -99,7 +120,7 @@
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="text-lg font-bold text-slate-100">₹${exp.amount}</span>
-                        <button onclick="deleteExpense(${realIndex})" class="text-slate-600 hover:text-red-400 p-2 transition-colors">
+                        <button onclick="deleteExpense(${realIndex})" class="text-slate-600 hover:text-red-400 p-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </div>
@@ -109,6 +130,42 @@
 
             totalDisplay.innerText = total.toLocaleString('en-IN');
             localStorage.setItem('paisaTracker', JSON.stringify(expenses));
+            updateChart(categoryTotals);
+        }
+
+        function updateChart(categoryTotals) {
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+            const labels = Object.keys(categoryTotals).map(c => c.substring(2)); // Remove emoji for chart labels
+            const data = Object.values(categoryTotals);
+
+            if (chartInstance) { chartInstance.destroy(); }
+
+            if(data.length === 0) return; // Don't draw empty chart
+
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#34d399', '#2dd4bf', '#22d3ee', '#818cf8', '#a78bfa', '#f472b6'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return ' ₹' + context.parsed; }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function addExpense() {
@@ -116,7 +173,7 @@
             const amount = parseFloat(document.getElementById('amountInput').value);
             const category = document.getElementById('categoryInput').value;
 
-            if (!desc || isNaN(amount) || amount <= 0) return alert("Enter valid details!");
+            if (!desc || isNaN(amount) || amount <= 0) return;
 
             expenses.push({ desc, amount, category, date: new Date().toISOString() });
 
@@ -128,6 +185,25 @@
         function deleteExpense(index) {
             expenses.splice(index, 1);
             renderUI();
+        }
+
+        function exportToCSV() {
+            if (expenses.length === 0) return alert("No data to export!");
+            
+            let csvContent = "data:text/csv;charset=utf-8,Date,Description,Category,Amount\n";
+            expenses.forEach(e => {
+                let date = new Date(e.date).toLocaleDateString('en-IN');
+                let row = `"${date}","${e.desc}","${e.category}",${e.amount}`;
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "paisa_trakrrrr_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         renderUI();
