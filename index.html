@@ -2,269 +2,134 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Cashflow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Paisa-Trakrrrr</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        ::-webkit-scrollbar { display: none; }
-        body { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Custom scrollbar for a polished look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans antialiased pb-24">
+<body class="bg-slate-900 text-slate-200 font-sans antialiased min-h-screen">
 
-    <!-- Header & Budget Dashboard -->
-    <header class="bg-slate-900 text-white p-6 rounded-b-[2rem] shadow-xl">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h1 class="text-2xl font-bold tracking-wide">My Ledger</h1>
-                <p class="text-slate-400 text-sm mt-1">Personal Tracking</p>
-            </div>
-            <div class="h-12 w-12 bg-slate-800 rounded-full flex items-center justify-center font-bold border border-slate-700 shadow-inner">
-                <i class="fa-solid fa-wallet text-emerald-400"></i>
-            </div>
-        </div>
-        
-        <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50 backdrop-blur-md">
-            <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-1">Total Spent (This Month)</p>
-            <h2 class="text-4xl font-bold text-white mb-4">₹<span id="totalSpend">0</span></h2>
-            
-            <!-- Visual Budget Bar -->
-            <div class="w-full bg-slate-700 rounded-full h-2.5 mb-2">
-                <div id="budgetBar" class="bg-emerald-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-            </div>
-            <div class="flex justify-between text-xs font-medium text-slate-400">
-                <span>Monthly Limit: ₹<span id="budgetLimitText">30000</span></span>
-                <button onclick="setBudget()" class="text-emerald-400 hover:text-emerald-300"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-            </div>
+    <header class="fixed top-0 w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800 z-50 shadow-sm shadow-emerald-900/20">
+        <div class="max-w-md mx-auto px-4 py-4 flex justify-center items-center">
+            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 tracking-tight drop-shadow-sm">
+                ₹ Paisa-Trakrrrr
+            </h1>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="p-5 mt-2">
-        <div class="flex justify-between items-end mb-4">
-            <h3 class="text-lg font-bold text-slate-800">Recent Logs</h3>
-            <button onclick="clearAll()" class="text-xs font-semibold text-red-500 hover:text-red-700">Clear All</button>
-        </div>
+    <main class="pt-24 pb-12 px-4 max-w-md mx-auto space-y-6">
         
-        <!-- Transaction Feed -->
-        <div id="transactionFeed" class="space-y-4">
-            <!-- Populated via JavaScript -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-800/50 p-6 rounded-3xl border border-slate-700 shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+            <p class="text-sm text-slate-400 font-medium uppercase tracking-wider mb-1">Total Spent</p>
+            <h2 class="text-5xl font-bold text-white flex items-baseline">
+                <span class="text-3xl mr-1 text-emerald-400">₹</span><span id="totalDisplay">0</span>
+            </h2>
         </div>
-    </main>
 
-    <!-- Floating Action Button -->
-    <button onclick="toggleModal('expenseModal')" class="fixed bottom-6 right-6 h-14 w-14 bg-emerald-500 text-white rounded-full shadow-lg shadow-emerald-500/40 flex items-center justify-center text-2xl hover:bg-emerald-600 transition-transform active:scale-95">
-        <i class="fa-solid fa-plus"></i>
-    </button>
-
-    <!-- Add Expense Modal -->
-    <div id="expenseModal" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-end sm:items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="bg-white w-full sm:w-96 rounded-t-3xl sm:rounded-2xl p-6 h-[85vh] sm:h-auto overflow-y-auto shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-800">Log Expense</h3>
-                <button onclick="toggleModal('expenseModal')" class="text-slate-400 hover:text-slate-700 bg-slate-100 h-8 w-8 rounded-full flex items-center justify-center">
-                    <i class="fa-solid fa-xmark"></i>
+        <div class="bg-slate-800/80 rounded-3xl p-5 border border-slate-700 shadow-lg backdrop-blur-sm">
+            <h3 class="text-lg font-semibold text-slate-100 mb-4">Log New Expense</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1 ml-1">What was it?</label>
+                    <input type="text" id="descInput" placeholder="e.g., Roadside Ice Cream, Fuel..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all">
+                </div>
+                <div class="flex gap-3">
+                    <div class="flex-1">
+                        <label class="block text-xs text-slate-400 mb-1 ml-1">Amount (₹)</label>
+                        <input type="number" id="amountInput" placeholder="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs text-slate-400 mb-1 ml-1">Category</label>
+                        <select id="categoryInput" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all appearance-none">
+                            <option>🍔 Food</option>
+                            <option>🏍️ Fuel</option>
+                            <option>🛒 Needs</option>
+                            <option>📈 Other</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="addExpense()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold text-lg py-3 rounded-xl shadow-lg shadow-emerald-500/30 transition-all active:scale-[0.98]">
+                    + Add to Tracker
                 </button>
             </div>
-
-            <form id="expenseForm" onsubmit="handleLogExpense(event)" class="space-y-5">
-                
-                <!-- Amount -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Amount</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-3.5 text-slate-400 font-bold text-lg">₹</span>
-                        <input type="number" id="amount" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-9 pr-4 text-xl font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-colors" placeholder="0.00">
-                    </div>
-                </div>
-
-                <!-- Description -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Description</label>
-                    <input type="text" id="desc" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-colors" placeholder="e.g., Night ride snacks, Groceries">
-                </div>
-
-                <!-- Category -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Category</label>
-                    <select id="category" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white appearance-none">
-                        <option value="food">Food (Zomato / Swiggy)</option>
-                        <option value="snacks">Roadside Snacks & Ice Cream</option>
-                        <option value="groceries">Groceries & Veg Day Prep</option>
-                        <option value="weekend">Movies, Treks & Go-Karting</option>
-                        <option value="travel">Bike Fuel & Auto</option>
-                        <option value="invest">Stocks & Investments</option>
-                        <option value="rent">Hinjewadi Rent & Utilities</option>
-                        <option value="other">Other / Misc</option>
-                    </select>
-                </div>
-
-                <!-- Payment Mode -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Payment Method</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <!-- Custom Radio Buttons for quick selection -->
-                        <label class="cursor-pointer">
-                            <input type="radio" name="mode" value="upi" class="peer sr-only" checked>
-                            <div class="text-center py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-600 peer-checked:border-emerald-300 transition-colors">UPI</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="mode" value="card" class="peer sr-only">
-                            <div class="text-center py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-600 peer-checked:border-emerald-300 transition-colors">Card</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="mode" value="cash" class="peer sr-only">
-                            <div class="text-center py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-600 peer-checked:border-emerald-300 transition-colors">Cash</div>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Submit -->
-                <button type="submit" class="w-full bg-slate-900 text-white font-bold rounded-xl py-4 mt-2 shadow-lg hover:bg-slate-800 active:scale-95 transition-all">
-                    Save Expense
-                </button>
-            </form>
         </div>
-    </div>
+
+        <div>
+            <h3 class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-3 ml-2">Recent Logs</h3>
+            <div id="expenseList" class="space-y-3">
+                </div>
+        </div>
+
+    </main>
 
     <script>
-        // UI mapping for custom categories
-        const catMeta = {
-            'food': { icon: 'fa-utensils', color: 'bg-orange-100 text-orange-600' },
-            'snacks': { icon: 'fa-ice-cream', color: 'bg-pink-100 text-pink-600' },
-            'groceries': { icon: 'fa-carrot', color: 'bg-green-100 text-green-600' },
-            'weekend': { icon: 'fa-ticket', color: 'bg-purple-100 text-purple-600' },
-            'travel': { icon: 'fa-motorcycle', color: 'bg-teal-100 text-teal-600' },
-            'invest': { icon: 'fa-chart-line', color: 'bg-blue-100 text-blue-600' },
-            'rent': { icon: 'fa-house', color: 'bg-indigo-100 text-indigo-600' },
-            'other': { icon: 'fa-receipt', color: 'bg-slate-200 text-slate-600' }
-        };
+        // The script checks if you have old data saved on your phone and keeps it!
+        let expenses = JSON.parse(localStorage.getItem('paisaTracker')) || [];
 
-        // Initialize state
-        let transactions = JSON.parse(localStorage.getItem('personal_txns')) || [];
-        let monthlyBudget = parseInt(localStorage.getItem('personal_budget')) || 30000;
-
-        function toggleModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.toggle('hidden');
-        }
-
-        function setBudget() {
-            const newBudget = prompt("Enter your monthly budget limit (₹):", monthlyBudget);
-            if (newBudget && !isNaN(newBudget)) {
-                monthlyBudget = parseInt(newBudget);
-                localStorage.setItem('personal_budget', monthlyBudget);
-                renderUI();
-            }
-        }
-
-        function clearAll() {
-            if(confirm("Are you sure you want to delete all transaction history?")) {
-                transactions = [];
-                localStorage.removeItem('personal_txns');
-                renderUI();
-            }
-        }
-
-        function handleLogExpense(e) {
-            e.preventDefault();
+        function renderUI() {
+            const list = document.getElementById('expenseList');
+            const totalDisplay = document.getElementById('totalDisplay');
             
-            // Get selected radio button value
-            const modeRadios = document.getElementsByName('mode');
-            let selectedMode = 'upi';
-            for (let radio of modeRadios) {
-                if (radio.checked) {
-                    selectedMode = radio.value;
-                    break;
-                }
+            list.innerHTML = '';
+            let total = 0;
+
+            if (expenses.length === 0) {
+                list.innerHTML = `<p class="text-center text-slate-500 mt-6 text-sm">No expenses yet. Time to hit the road!</p>`;
             }
 
-            const newTxn = {
-                id: Date.now(),
-                amount: parseFloat(document.getElementById('amount').value),
-                desc: document.getElementById('desc').value,
-                category: document.getElementById('category').value,
-                mode: selectedMode,
-                date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit' })
-            };
+            expenses.slice().reverse().forEach((exp, index) => {
+                total += exp.amount;
+                const realIndex = expenses.length - 1 - index; 
 
-            transactions.unshift(newTxn); // Add to top of list
-            localStorage.setItem('personal_txns', JSON.stringify(transactions));
-            
-            document.getElementById('expenseForm').reset();
-            // Reset radio to UPI by default
-            document.querySelector('input[value="upi"]').checked = true;
-            
-            toggleModal('expenseModal');
+                const item = document.createElement('div');
+                item.className = "bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 flex justify-between items-center shadow-sm";
+                item.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="text-2xl">${exp.category ? exp.category.split(' ')[0] : '💸'}</div>
+                        <div>
+                            <p class="text-slate-200 font-medium">${exp.desc}</p>
+                            <p class="text-xs text-slate-500">${new Date(exp.date).toLocaleDateString('en-IN')}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg font-bold text-slate-100">₹${exp.amount}</span>
+                        <button onclick="deleteExpense(${realIndex})" class="text-slate-600 hover:text-red-400 p-2 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            totalDisplay.innerText = total.toLocaleString('en-IN');
+            localStorage.setItem('paisaTracker', JSON.stringify(expenses));
+        }
+
+        function addExpense() {
+            const desc = document.getElementById('descInput').value;
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            const category = document.getElementById('categoryInput').value;
+
+            if (!desc || isNaN(amount) || amount <= 0) return alert("Enter valid details!");
+
+            expenses.push({ desc, amount, category, date: new Date().toISOString() });
+
+            document.getElementById('descInput').value = '';
+            document.getElementById('amountInput').value = '';
             renderUI();
         }
 
-        function renderUI() {
-            const feed = document.getElementById('transactionFeed');
-            feed.innerHTML = '';
-            
-            let total = 0;
-
-            if (transactions.length === 0) {
-                feed.innerHTML = `
-                    <div class="text-center py-10 text-slate-400">
-                        <i class="fa-solid fa-ghost text-4xl mb-3 opacity-20"></i>
-                        <p class="text-sm font-medium">No expenses logged yet.</p>
-                    </div>`;
-            } else {
-                transactions.forEach(txn => {
-                    total += txn.amount;
-                    const meta = catMeta[txn.category] || catMeta['other'];
-                    
-                    const card = `
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <div class="h-12 w-12 rounded-xl flex items-center justify-center text-lg ${meta.color}">
-                                    <i class="fa-solid ${meta.icon}"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-slate-800 capitalize">${txn.desc}</h4>
-                                    <p class="text-xs text-slate-400 font-medium mt-0.5">
-                                        <span class="uppercase tracking-wider mr-1 px-1.5 py-0.5 bg-slate-100 rounded text-[10px]">${txn.mode}</span>
-                                        ${txn.date}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-bold text-slate-800 text-lg">₹${txn.amount}</p>
-                            </div>
-                        </div>
-                    `;
-                    feed.innerHTML += card;
-                });
-            }
-
-            // Update Budget Dashboard
-            document.getElementById('totalSpend').innerText = total.toLocaleString('en-IN');
-            document.getElementById('budgetLimitText').innerText = monthlyBudget.toLocaleString('en-IN');
-            
-            // Calculate Budget Bar Percentage
-            let percentage = (total / monthlyBudget) * 100;
-            if (percentage > 100) percentage = 100;
-            
-            const budgetBar = document.getElementById('budgetBar');
-            budgetBar.style.width = percentage + '%';
-            
-            // Change color if over budget
-            if (percentage > 90) {
-                budgetBar.classList.remove('bg-emerald-400', 'bg-amber-400');
-                budgetBar.classList.add('bg-red-500');
-            } else if (percentage > 75) {
-                budgetBar.classList.remove('bg-emerald-400', 'bg-red-500');
-                budgetBar.classList.add('bg-amber-400');
-            } else {
-                budgetBar.classList.remove('bg-red-500', 'bg-amber-400');
-                budgetBar.classList.add('bg-emerald-400');
-            }
+        function deleteExpense(index) {
+            expenses.splice(index, 1);
+            renderUI();
         }
 
-        // Initial render on load
         renderUI();
     </script>
 </body>
