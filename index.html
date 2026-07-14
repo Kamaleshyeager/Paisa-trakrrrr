@@ -3,44 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Paisa-Trakrrrr</title>
+    <title>Paisa-Trakrrrr Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-[#0A0A0A] text-[#EDEDED] antialiased min-h-screen pb-20 selection:bg-white/20">
 
-    <div class="max-w-md mx-auto px-5 pt-10 space-y-6">
+    <div class="max-w-md mx-auto px-5 pt-8 space-y-6">
         
-        <header class="mb-10">
-            <p class="text-[#A1A1AA] text-sm font-medium tracking-wide uppercase mb-2">Total Balance</p>
-            <h1 class="text-6xl font-bold tracking-tighter flex items-center gap-1 font-mono">
-                <span class="text-[#666666] text-4xl">₹</span><span id="totalDisplay">0</span>
-            </h1>
+        <header class="flex justify-between items-end relative z-10">
+            <div>
+                <p class="text-[#A1A1AA] text-xs font-semibold tracking-widest uppercase mb-1 flex items-center gap-2">
+                    Monthly Credit
+                    <button onclick="setMonthlyCredit()" class="text-[#666] hover:text-white"><i class="ph ph-pencil-simple"></i></button>
+                </p>
+                <h2 class="text-xl font-medium font-mono text-[#666]">₹<span id="creditDisplay">0</span></h2>
+            </div>
+            <div class="text-right">
+                <p class="text-[#A1A1AA] text-xs font-semibold tracking-widest uppercase mb-1">Available</p>
+                <h1 class="text-4xl font-bold tracking-tighter font-mono" id="availableDisplay">₹0</h1>
+            </div>
         </header>
 
+        <div class="h-24 w-full relative -mx-2 opacity-80 pointer-events-none">
+            <canvas id="pulseChart"></canvas>
+        </div>
+
         <section>
+            <p class="text-[#666666] text-xs font-semibold uppercase tracking-widest mb-3">Quick Fill</p>
             <div class="grid grid-cols-4 gap-3" id="quickLogGrid">
                 </div>
         </section>
 
-        <section class="glass-card p-1 flex gap-2 items-center rounded-2xl relative z-10 focus-within:ring-1 focus-within:ring-white/20 transition-all">
-            <div class="relative flex-1">
-                <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[#666666]"></i>
-                <input type="text" id="descInput" placeholder="Log an expense..." class="w-full bg-transparent text-sm px-10 py-3 text-white placeholder-[#666666] focus:outline-none">
+        <section class="glass-card p-4 rounded-2xl space-y-3 relative z-10 focus-within:ring-1 focus-within:ring-white/10 transition-all">
+            
+            <div class="flex gap-3">
+                <div class="relative flex-1">
+                    <i class="ph ph-pencil-line absolute left-3 top-1/2 -translate-y-1/2 text-[#666]"></i>
+                    <input type="text" id="descInput" placeholder="What did you pay for?" class="w-full bg-[#1A1A1A] rounded-xl text-sm pl-9 pr-3 py-3 text-white placeholder-[#666666] focus:outline-none">
+                </div>
+                <input type="number" id="amountInput" placeholder="₹ 0" class="w-24 bg-[#1A1A1A] rounded-xl text-sm px-3 py-3 text-white placeholder-[#666666] focus:outline-none font-mono">
             </div>
-            <input type="number" id="amountInput" placeholder="₹ 0" class="w-20 bg-transparent text-sm py-3 text-white placeholder-[#666666] focus:outline-none font-mono">
-            <button onclick="addManualExpense()" class="bg-white text-black p-3 rounded-xl hover:bg-gray-200 transition-transform active:scale-95">
-                <i class="ph ph-arrow-right font-bold"></i>
+
+            <div class="flex gap-3">
+                <select id="categoryInput" class="flex-1 bg-[#1A1A1A] rounded-xl px-3 py-3 text-sm text-[#A1A1AA] focus:outline-none appearance-none">
+                    </select>
+                <select id="paymentMethod" class="w-24 bg-[#1A1A1A] rounded-xl px-3 py-3 text-sm text-[#A1A1AA] focus:outline-none appearance-none">
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Card">Card</option>
+                </select>
+            </div>
+
+            <input type="text" id="customCategoryInput" placeholder="Enter unique category name..." class="hidden w-full bg-[#111] border border-[#333] rounded-xl text-sm px-4 py-3 text-[#A1A1AA] focus:outline-none">
+            <input type="text" id="paymentDetailsInput" placeholder="Which App or Bank? (Optional)" class="hidden w-full bg-[#111] border border-[#333] rounded-xl text-sm px-4 py-3 text-[#A1A1AA] focus:outline-none">
+
+            <button onclick="processForm()" class="w-full bg-white text-black font-bold text-sm py-3 rounded-xl hover:bg-gray-200 transition-transform active:scale-[0.98]">
+                Log Transaction
             </button>
         </section>
 
-        <select id="categoryInput" class="w-full bg-[#111] border border-[#222] rounded-xl px-4 py-3 text-sm text-[#A1A1AA] focus:outline-none appearance-none mt-2">
-            </select>
-
-        <section class="pt-6">
-            <h3 class="text-[#666666] text-xs font-semibold uppercase tracking-widest mb-4">Recent Transactions</h3>
+        <section class="pt-4">
+            <div class="flex justify-between items-end mb-4">
+                <h3 class="text-[#666666] text-xs font-semibold uppercase tracking-widest">History</h3>
+                <p class="text-[#666666] text-xs font-mono">Total Spent: ₹<span id="totalSpentDisplay">0</span></p>
+            </div>
             <div id="expenseList" class="space-y-1">
                 </div>
         </section>
