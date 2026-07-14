@@ -3,181 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Paisa-Trakrrrr Ultimate</title>
+    <title>Paisa-Trakrrrr</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #000000; }
-        ::-webkit-scrollbar { display: none; }
-        .bento-card { background: #111111; border: 1px solid #222; border-radius: 24px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="text-gray-200 antialiased min-h-screen pb-20">
+<body class="bg-[#0A0A0A] text-[#EDEDED] antialiased min-h-screen pb-20 selection:bg-white/20">
 
-    <div class="max-w-md mx-auto px-4 pt-8 space-y-4">
+    <div class="max-w-md mx-auto px-5 pt-10 space-y-6">
         
-        <div class="bento-card p-6 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-purple-600/20 rounded-full blur-3xl"></div>
-            <div class="flex justify-between items-start mb-6">
-                <div>
-                    <h1 class="text-xl font-extrabold tracking-tight text-white mb-1">Paisa-Trakrrrr</h1>
-                    <p class="text-xs text-gray-400">Monthly Snapshot</p>
-                </div>
-            </div>
-            
-            <h2 class="text-5xl font-extrabold text-white mb-4 tracking-tighter">
-                <span class="text-2xl text-gray-500 mr-1">₹</span><span id="totalDisplay">0</span>
-            </h2>
+        <header class="mb-10">
+            <p class="text-[#A1A1AA] text-sm font-medium tracking-wide uppercase mb-2">Total Balance</p>
+            <h1 class="text-6xl font-bold tracking-tighter flex items-center gap-1 font-mono">
+                <span class="text-[#666666] text-4xl">₹</span><span id="totalDisplay">0</span>
+            </h1>
+        </header>
 
-            <div class="space-y-2">
-                <div class="flex justify-between text-xs text-gray-400 font-semibold">
-                    <span>Budget Limit: ₹<span id="budgetLimitText">15,000</span></span>
-                    <span id="budgetPercent">0%</span>
+        <section>
+            <div class="grid grid-cols-4 gap-3" id="quickLogGrid">
                 </div>
-                <div class="w-full bg-gray-800 rounded-full h-2.5">
-                    <div id="budgetBar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-2.5 rounded-full" style="width: 0%"></div>
+        </section>
+
+        <section class="glass-card p-1 flex gap-2 items-center rounded-2xl relative z-10 focus-within:ring-1 focus-within:ring-white/20 transition-all">
+            <div class="relative flex-1">
+                <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[#666666]"></i>
+                <input type="text" id="descInput" placeholder="Log an expense..." class="w-full bg-transparent text-sm px-10 py-3 text-white placeholder-[#666666] focus:outline-none">
+            </div>
+            <input type="number" id="amountInput" placeholder="₹ 0" class="w-20 bg-transparent text-sm py-3 text-white placeholder-[#666666] focus:outline-none font-mono">
+            <button onclick="addManualExpense()" class="bg-white text-black p-3 rounded-xl hover:bg-gray-200 transition-transform active:scale-95">
+                <i class="ph ph-arrow-right font-bold"></i>
+            </button>
+        </section>
+
+        <select id="categoryInput" class="w-full bg-[#111] border border-[#222] rounded-xl px-4 py-3 text-sm text-[#A1A1AA] focus:outline-none appearance-none mt-2">
+            </select>
+
+        <section class="pt-6">
+            <h3 class="text-[#666666] text-xs font-semibold uppercase tracking-widest mb-4">Recent Transactions</h3>
+            <div id="expenseList" class="space-y-1">
                 </div>
-            </div>
-        </div>
-
-        <div class="bento-card p-5">
-            <h3 class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-3">⚡ Quick Log</h3>
-            <div class="grid grid-cols-3 gap-2">
-                <button onclick="quickLog('Roadside Snacks', 150, '🍦 Roadside Cravings')" class="bg-gray-800 hover:bg-gray-700 rounded-xl p-3 text-left transition-transform active:scale-95">
-                    <div class="text-xl mb-1">🍦</div>
-                    <div class="text-[10px] text-gray-400 line-clamp-1">Snacks</div>
-                    <div class="text-sm font-bold text-white">₹150</div>
-                </button>
-                <button onclick="quickLog('Bike Fuel', 300, '🏍️ Night Rides & Fuel')" class="bg-gray-800 hover:bg-gray-700 rounded-xl p-3 text-left transition-transform active:scale-95">
-                    <div class="text-xl mb-1">🏍️</div>
-                    <div class="text-[10px] text-gray-400 line-clamp-1">Fuel</div>
-                    <div class="text-sm font-bold text-white">₹300</div>
-                </button>
-                <button onclick="quickLog('Movie / Karting', 500, '🎬 Weekend Experiences')" class="bg-gray-800 hover:bg-gray-700 rounded-xl p-3 text-left transition-transform active:scale-95">
-                    <div class="text-xl mb-1">🎬</div>
-                    <div class="text-[10px] text-gray-400 line-clamp-1">Weekend</div>
-                    <div class="text-sm font-bold text-white">₹500</div>
-                </button>
-            </div>
-        </div>
-
-        <div class="bento-card p-5">
-            <div class="flex gap-3 mb-3">
-                <input type="text" id="descInput" placeholder="What did you buy?" class="flex-1 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
-                <input type="number" id="amountInput" placeholder="₹ Amount" class="w-28 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
-            </div>
-            <div class="flex gap-3">
-                <select id="categoryInput" class="flex-1 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none appearance-none">
-                    <option value="🏍️ Night Rides & Fuel">🏍️ Night Rides & Fuel</option>
-                    <option value="🍦 Roadside Cravings">🍦 Roadside Cravings</option>
-                    <option value="🎬 Weekend Experiences">🎬 Weekend (Trekking, Karting, Cinema)</option>
-                    <option value="🥗 Veg Day Discipline">🥗 Veg Day Discipline</option>
-                    <option value="📚 Data Science & Tech">📚 Data Science & Tech</option>
-                    <option value="📈 Stocks & Investments">📈 Stocks & Investments</option>
-                    <option value="🛒 General Needs">🛒 General Needs</option>
-                </select>
-                <button onclick="addExpense()" class="w-28 bg-white text-black font-bold text-sm rounded-xl hover:bg-gray-200 transition-transform active:scale-95">
-                    Add
-                </button>
-            </div>
-        </div>
-
-        <div class="bento-card p-5">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xs text-gray-400 font-semibold uppercase tracking-wider">History</h3>
-                <input type="text" id="searchInput" onkeyup="filterExpenses()" placeholder="🔍 Search..." class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-32">
-            </div>
-            <div id="expenseList" class="space-y-1 max-h-64 overflow-y-auto pr-1">
-                </div>
-        </div>
+        </section>
 
     </div>
 
-    <script>
-        let expenses = JSON.parse(localStorage.getItem('paisaTracker')) || [];
-        const MONTHLY_BUDGET = 15000; // Change this number to your actual monthly limit
-
-        function renderUI(filterText = '') {
-            const list = document.getElementById('expenseList');
-            const totalDisplay = document.getElementById('totalDisplay');
-            const budgetBar = document.getElementById('budgetBar');
-            const budgetPercent = document.getElementById('budgetPercent');
-            
-            list.innerHTML = '';
-            let total = 0;
-
-            expenses.slice().reverse().forEach((exp, index) => {
-                total += exp.amount;
-                const realIndex = expenses.length - 1 - index; 
-                const emoji = exp.category.split(' ')[0];
-
-                // Search Filter Logic
-                if (filterText && !exp.desc.toLowerCase().includes(filterText.toLowerCase()) && !exp.category.toLowerCase().includes(filterText.toLowerCase())) {
-                    return;
-                }
-
-                const item = document.createElement('div');
-                item.className = "group flex justify-between items-center py-3 border-b border-gray-800/50 last:border-0";
-                item.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-lg border border-gray-800">${emoji}</div>
-                        <div>
-                            <p class="text-sm font-semibold text-gray-200">${exp.desc}</p>
-                            <p class="text-[10px] text-gray-500">${new Date(exp.date).toLocaleDateString('en-IN')} • ${exp.category.substring(2)}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-sm font-bold text-white">₹${exp.amount}</span>
-                        <button onclick="deleteExpense(${realIndex})" class="text-gray-600 hover:text-red-500 text-lg px-2 active:scale-90">×</button>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-
-            // Update Budget UI
-            totalDisplay.innerText = total.toLocaleString('en-IN');
-            let percent = Math.min((total / MONTHLY_BUDGET) * 100, 100);
-            budgetBar.style.width = percent + '%';
-            budgetPercent.innerText = Math.round(percent) + '%';
-            
-            if(percent >= 90) budgetBar.className = "bg-red-500 h-2.5 rounded-full";
-            else budgetBar.className = "bg-gradient-to-r from-purple-500 to-indigo-500 h-2.5 rounded-full";
-
-            localStorage.setItem('paisaTracker', JSON.stringify(expenses));
-        }
-
-        function addExpense() {
-            const desc = document.getElementById('descInput').value;
-            const amount = parseFloat(document.getElementById('amountInput').value);
-            const category = document.getElementById('categoryInput').value;
-
-            if (!desc || isNaN(amount) || amount <= 0) return;
-            saveExpense(desc, amount, category);
-            
-            document.getElementById('descInput').value = '';
-            document.getElementById('amountInput').value = '';
-        }
-
-        function quickLog(desc, amount, category) {
-            saveExpense(desc, amount, category);
-        }
-
-        function saveExpense(desc, amount, category) {
-            expenses.push({ desc, amount, category, date: new Date().toISOString() });
-            renderUI();
-        }
-
-        function deleteExpense(index) {
-            expenses.splice(index, 1);
-            renderUI();
-        }
-
-        function filterExpenses() {
-            const query = document.getElementById('searchInput').value;
-            renderUI(query);
-        }
-
-        renderUI();
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>

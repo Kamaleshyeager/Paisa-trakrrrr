@@ -1,0 +1,36 @@
+/* Core Styling & Resets */
+body {
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Financial Numbers look best in Monospace */
+.font-mono {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Hide scrollbars but keep functionality */
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* Premium Glass Cards */
+.glass-card {
+    background: #111111;
+    border: 1px solid #222222;
+}
+
+/* List Item Transitions */
+.transaction-item {
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.transaction-item:hover {
+    background-color: #161616;
+}
+
+.icon-box {
+    background: #1A1A1A;
+    border: 1px solid #2A2A2A;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
